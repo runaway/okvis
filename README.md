@@ -224,3 +224,4 @@ OKVIS.
 The developpers will be happy to assist you or to consider bug reports / feature 
 requests. But questions that can be answered reading this document will be 
 ignored. Please contact s.leutenegger@imperial.ac.uk.
+# okvis

@@ -1,0 +1,13 @@
+# Target labels
+ ceres_external
+# Source files and their labels
+/home/david/Downloads/okvis/build/CMakeFiles/ceres_external
+/home/david/Downloads/okvis/build/CMakeFiles/ceres_external.rule
+/home/david/Downloads/okvis/build/CMakeFiles/ceres_external-complete.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-install.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-mkdir.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-download.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-update.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-patch.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-configure.rule
+/home/david/Downloads/okvis/build/ceres/src/ceres_external-stamp/ceres_external-build.rule

@@ -1,0 +1,15 @@
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/install.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/list_install_components.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/rebuild_cache.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/edit_cache.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/demo.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/brisk.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/install/strip.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/CMakeFiles/install/local.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/install.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/list_install_components.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/rebuild_cache.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/agast.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/install/strip.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/install/local.dir
+/home/david/Downloads/okvis/build/brisk/src/brisk_external-build/agast/CMakeFiles/edit_cache.dir

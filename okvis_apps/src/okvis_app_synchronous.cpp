@@ -61,6 +61,16 @@
 
 #include <boost/filesystem.hpp>
 
+#define USE_CAMERA
+
+using namespace cv;
+using namespace std;
+
+VideoCapture g_VideoCapture;
+bool g_bVideoCaptureEnable = false;
+unsigned int g_nVideoWidth = 0;
+unsigned int g_nVideoHeight= 0;
+
 class PoseViewer
 {
  public:
@@ -195,12 +205,78 @@ class PoseViewer
   std::atomic_bool showing_;
 };
 
+bool VideoCameraOpen(unsigned int& nVideoWidth, unsigned int& nVideoHeight)
+{
+	Mat matSrc;
+    g_VideoCapture.open(0);
+
+	if (!g_VideoCapture.isOpened())
+	{
+		cerr << "ERROR! Unable to open camera\n";
+        //AfxMessageBox("ERROR! Unable to open camera");
+		return false;
+	}
+
+	g_bVideoCaptureEnable = true;
+	g_VideoCapture >> matSrc;
+
+	if (matSrc.empty())
+	{
+		cerr << "ERROR! blank frame grabbed\n";
+        //AfxMessageBox("ERROR! blank frame grabbed");
+		return false;
+	}
+
+    nVideoWidth = g_nVideoWidth = matSrc.cols;
+    nVideoHeight = g_nVideoHeight = matSrc.rows;
+	//imshow("matSrc", matSrc);
+
+    //DetectObjectInit();
+    
+	return true;
+}
+
+bool VideoCameraGrabFrame(unsigned char* pbyFrameData, Mat& matFrame)
+{
+	//Mat matSrc;
+
+	if (false == g_bVideoCaptureEnable)
+	{
+		return false;
+	}
+
+	if (!g_VideoCapture.read(matFrame))
+	{
+		cerr << "ERROR! blank frame grabbed\n";
+        //AfxMessageBox("ERROR! blank frame grabbed");
+		return false;
+	}
+
+    //DetectObject(matSrc);
+    
+	memcpy(pbyFrameData, matFrame.ptr<uchar>(0), g_nVideoWidth * g_nVideoHeight * 3);
+	//imshow("matFrame", matFrame);
+
+
+	return true;
+}
+
 // this is just a workbench. most of the stuff here will go into the Frontend class.
 int main(int argc, char **argv)
 {
   google::InitGoogleLogging(argv[0]);
   FLAGS_stderrthreshold = 0;  // INFO: 0, WARNING: 1, ERROR: 2, FATAL: 3
   FLAGS_colorlogtostderr = 1;
+
+  unsigned char  abyFrameData[640 * 480 * 6];
+  Mat matLeft;
+  Mat matRight;
+  Mat matFrame;
+  Mat matLeftGray;
+  Mat matRightGray;
+  Size sizeDst(752, 480);
+  Mat matLeftGrayTemp;
+  Mat matRightGrayTemp;
 
   if (argc != 3 && argc != 4) {
     LOG(ERROR)<<
@@ -234,6 +310,10 @@ int main(int argc, char **argv)
   std::string path(argv[2]);
 
   const unsigned int numCameras = parameters.nCameraSystem.numCameras();
+
+#ifdef USE_CAMERA
+    VideoCameraOpen(g_nVideoWidth, g_nVideoHeight);
+#endif
 
   // open the IMU file
   std::string line;
@@ -304,9 +384,28 @@ int main(int argc, char **argv)
       }
     }
 
+#ifdef USE_CAMERA
+    printf("g_nVideoWidth, g_nVideoHeight numCameras = %d %d %d\n", g_nVideoWidth, g_nVideoHeight, numCameras);
+    VideoCameraGrabFrame(abyFrameData, matFrame);
+   // imshow("matFrame", matFrame);
+    Rect rectROI =  Rect(0, 0 , g_nVideoWidth / 2,  g_nVideoHeight);
+    matLeft = matFrame(rectROI);
+    rectROI =  Rect(g_nVideoWidth / 2, 0 , g_nVideoWidth / 2,  g_nVideoHeight);
+    matRight = matFrame(rectROI);
+    cvtColor(matLeft, matLeftGray, COLOR_BGR2GRAY);
+    cvtColor(matRight, matRightGray, COLOR_BGR2GRAY);
+    //matLeftGray.resize(752, 480);
+    //matRightGray.resize(752, 480);
+    resize(matLeftGray, matLeftGrayTemp, sizeDst);
+    resize(matRightGray, matRightGrayTemp, sizeDst);
+    imshow("matLeft", matLeftGrayTemp);
+    imshow("matRight", matRightGrayTemp);
+#endif
+
     /// add images
     okvis::Time t;
 
+#ifndef USE_CAMERA  
     for (size_t i = 0; i < numCameras; ++i) {
       cv::Mat filtered = cv::imread(
           path + "/cam" + std::to_string(i) + "/data/" + *cam_iterators.at(i),
@@ -319,6 +418,31 @@ int main(int argc, char **argv)
       if (start == okvis::Time(0.0)) {
         start = t;
       }
+#else
+    for (size_t i = 0; i < numCameras; ++i) 
+    {
+      //cv::Mat filtered = cv::imread(
+      //   path + "/cam" + std::to_string(i) + "/data/" + *cam_iterators.at(i),
+      //   cv::IMREAD_GRAYSCALE);
+      cv::Mat filtered;
+        if (0 == i)
+        {
+            filtered   = matLeftGrayTemp;
+        }
+        else if (1 == i)
+        {
+            filtered   = matRightGrayTemp;
+        }
+      
+      std::string nanoseconds = cam_iterators.at(i)->substr(
+          cam_iterators.at(i)->size() - 13, 9);
+      std::string seconds = cam_iterators.at(i)->substr(
+          0, cam_iterators.at(i)->size() - 13);
+      t = okvis::Time(std::stoi(seconds), std::stoi(nanoseconds));
+      if (start == okvis::Time(0.0)) {
+        start = t;
+      }
+#endif
 
       // get all IMU measurements till then
       okvis::Time t_imu = start;
@@ -358,7 +482,20 @@ int main(int argc, char **argv)
 
       // add the image to the frontend for (blocking) processing
       if (t - start > deltaT) {
+#ifndef USE_CAMERA        
         okvis_estimator.addImage(t, i, filtered);
+#else
+        printf("Cameras i = %d \n", i);
+ 
+        if (0 == i)
+        {
+            okvis_estimator.addImage(t, i, matLeftGrayTemp);
+        }
+        else if (1 == i)
+        {
+            okvis_estimator.addImage(t, i, matRightGrayTemp);
+        }
+#endif
       }
 
       cam_iterators[i]++;

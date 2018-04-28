@@ -1,0 +1,6 @@
+---- okvis camera Matches (3 in 2 files) ----
+ThreadedKFVio.cpp (okvis_multisensor_processing\src):      windowname << "OKVIS camera " << im;
+ThreadedKFVio.cpp (okvis_multisensor_processing\src):    windowname << "OKVIS camera " << im;
+VioVisualizer.cpp (okvis_multisensor_processing\src):    windowname << "OKVIS camera " << im;
+---- Tracking failure. Number of 3d2d-matches Matches (1 in 1 files) ----
+Frontend.cpp (okvis_frontend\src):      LOG(WARNING) << "Tracking failure. Number of 3d2d-matches: " << num3dMatches;

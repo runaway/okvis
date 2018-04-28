@@ -141,13 +141,15 @@ bool Frontend::dataAssociationAndInitialization(
   // first frame? (did do addStates before, so 1 frame minimum in estimator)
   if (estimator.numFrames() > 1) {
 
-    int requiredMatches = 5;
+    int requiredMatches = 5; // 5
 
     double uncertainMatchFraction = 0;
     bool rotationOnly = false;
 
     // match to last keyframe
     TimerSwitchable matchKeyframesTimer("2.4.1 matchToKeyframes");
+    //printf("distortionType = %d \n", distortionType); //  1
+    distortionType = okvis::cameras::NCameraSystem::RadialTangential8;
     switch (distortionType) {
       case okvis::cameras::NCameraSystem::RadialTangential: {
         num3dMatches = matchToKeyframes<
